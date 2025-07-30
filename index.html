@@ -339,7 +339,7 @@
     <div id="introContent" style="background: #fff; color: #000; padding: 40px; max-width: 600px; text-align: center; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
       <h1 style="color: #00539C; margin-bottom: 20px;">🎉 Welcome to Birthday Jeopardy! 🎉</h1>
 <p style="font-size: 1.2em; margin-bottom: 30px; line-height: 1.6;">
-  Test your knowledge with a special game celebrating Steve (born 7/30/1953) and Denise (born 12/10/1952)!
+  Test your knowledge with a special game celebrating Steve (born 1953) and Denise (born 1952)!
   Categories include Pop Culture, Astronomy, Inventions, Science Fiction, and Original Star Trek Trivia.
 </p>
 <p style="font-size: 1.1em; margin-bottom: 30px; color: #666;">
@@ -376,169 +376,242 @@
 
     // Each answer must be 1972, 1974, or 'Neither'
     const qna = {
-      "Music": {
-        100: { 
-          q: "In what year did David Bowie release 'Ziggy Stardust'?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        },
-        200: { 
-          q: "In what year did Pink Floyd release 'The Dark Side of the Moon'?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        300: { 
-          q: "In what year did The Rolling Stones release 'Sticky Fingers'?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        400: { 
-          q: "In what year did Queen form as a band?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        500: { 
-          q: "In what year did Bruce Springsteen release 'Born to Run'?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        }
-      },
-      "Movies": {
-        100: { 
-          q: "In what year did 'The Godfather' premiere?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        },
-        200: { 
-          q: "In what year was 'The Towering Inferno' released?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        300: { 
-          q: "In what year did 'Jaws' first hit theaters?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        400: { 
-          q: "In what year did 'Chinatown' premiere?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        500: { 
-          q: "In what year was 'Star Wars' released?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        }
-      },
-      "TV & Pop Culture": {
-        100: { 
-          q: "In what year did 'M*A*S*H' first premiere on TV?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        },
-        200: { 
-          q: "In what year did 'Happy Days' debut on television?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        300: { 
-          q: "In what year did 'Saturday Night Live' first air?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        400: { 
-          q: "In what year did 'All in the Family' debut?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        500: { 
-          q: "In what year was the video game 'Pong' released?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        }
-      },
-      "Everyday Prices": {
-        100: { 
-          q: "In what year was the average movie ticket price $1.65?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        },
-        200: { 
-          q: "In what year did a loaf of bread cost around $0.25?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        300: { 
-          q: "In what year did a gallon of milk cost $1.00?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        400: { 
-          q: "In what year did the average cost of a new house reach $30,000?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        500: { 
-          q: "In what year did the average annual income hit $10,000?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        }
-      },
-      "Headlines": {
-        100: { 
-          q: "In what year did the Watergate break-in occur?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        },
-        200: { 
-          q: "In what year did President Nixon resign?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        300: { 
-          q: "In what year did the Vietnam War officially end?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        400: { 
-          q: "In what year was the first UPC barcode scanned?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        500: { 
-          q: "In what year did the FIFA World Cup expand to 16 teams?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        }
-      },
-      "Fashion & Trends": {
-        100: { 
-          q: "In what year did platform shoes become a major trend?", 
-          a: "1972",
-          options: ["1972", "1974", "Neither"]
-        },
-        200: { 
-          q: "In what year did bell-bottom pants reach peak popularity?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        },
-        300: { 
-          q: "In what year did mood rings first hit the market?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        400: { 
-          q: "In what year did the Pet Rock craze begin?", 
-          a: "Neither",
-          options: ["1972", "1974", "Neither"]
-        },
-        500: { 
-          q: "In what year did the streaking craze sweep college campuses?", 
-          a: "1974",
-          options: ["1972", "1974", "Neither"]
-        }
-      }
-    };
+  "Pop Culture": {
+    "100": {
+      "q": "What iconic doll, introduced by Mattel in 1959, became a symbol of American pop culture?",
+      "a": "What is Barbie?",
+      "options": [
+        "What is Barbie?",
+        "What is Chatty Cathy?",
+        "What is Tammy?"
+      ]
+    },
+    "200": {
+      "q": "Which British band\u2019s appearance on The Ed Sullivan Show in 1964 launched the 'British Invasion' in America?",
+      "a": "Who are The Beatles?",
+      "options": [
+        "Who are The Beatles?",
+        "Who are The Rolling Stones?",
+        "Who are The Kinks?"
+      ]
+    },
+    "300": {
+      "q": "Known for her platinum blonde hair, who starred in Gentlemen Prefer Blondes and became a 1950s sex symbol?",
+      "a": "Who is Marilyn Monroe?",
+      "options": [
+        "Who is Marilyn Monroe?",
+        "Who is Jayne Mansfield?",
+        "Who is Grace Kelly?"
+      ]
+    },
+    "400": {
+      "q": "What dance craze, popularized in the early 1960s, featured the song 'Let\u2019s Twist Again' by Chubby Checker?",
+      "a": "What is The Twist?",
+      "options": [
+        "What is The Twist?",
+        "What is The Jitterbug?",
+        "What is The Mashed Potato?"
+      ]
+    },
+    "500": {
+      "q": "This magazine, founded in 1953 by Hugh Hefner, was as known for its articles as its provocative centerfolds.",
+      "a": "What is Playboy?",
+      "options": [
+        "What is Playboy?",
+        "What is Esquire?",
+        "What is Penthouse?"
+      ]
+    }
+  },
+  "Astronomy": {
+    "100": {
+      "q": "What term describes the point in a planet's orbit when it is closest to the Sun?",
+      "a": "What is perihelion?",
+      "options": [
+        "What is perihelion?",
+        "What is aphelion?",
+        "What is periapsis?"
+      ]
+    },
+    "200": {
+      "q": "Which planet rotates on its side, with an axial tilt of about 98 degrees?",
+      "a": "What is Uranus?",
+      "options": [
+        "What is Uranus?",
+        "What is Neptune?",
+        "What is Venus?"
+      ]
+    },
+    "300": {
+      "q": "What element fuels nuclear fusion in the core of most main-sequence stars?",
+      "a": "What is hydrogen?",
+      "options": [
+        "What is hydrogen?",
+        "What is helium?",
+        "What is carbon?"
+      ]
+    },
+    "400": {
+      "q": "What phenomenon causes light from distant galaxies to shift toward the red end of the spectrum, providing evidence of an expanding universe?",
+      "a": "What is redshift?",
+      "options": [
+        "What is redshift?",
+        "What is blueshift?",
+        "What is lensing?"
+      ]
+    },
+    "500": {
+      "q": "What is the name of the first space telescope launched into orbit in 1990 that revolutionized our view of the universe?",
+      "a": "What is the Hubble Space Telescope?",
+      "options": [
+        "What is the Hubble Space Telescope?",
+        "What is the James Webb Telescope?",
+        "What is the Kepler Telescope?"
+      ]
+    }
+  },
+  "Inventions": {
+    "100": {
+      "q": "In 1952, which American virologist developed the first effective vaccine against poliomyelitis?",
+      "a": "Who is Jonas Salk?",
+      "options": [
+        "Who is Jonas Salk?",
+        "Who is Albert Sabin?",
+        "Who is Louis Pasteur?"
+      ]
+    },
+    "200": {
+      "q": "Patented in 1947, what everyday object was originally marketed as 'the soundless zipper'?",
+      "a": "What is Velcro?",
+      "options": [
+        "What is Velcro?",
+        "What is the zipper?",
+        "What is Scotch tape?"
+      ]
+    },
+    "300": {
+      "q": "In 1953, what groundbreaking double-helix model was proposed, revealing the structure of genetic material?",
+      "a": "What is DNA?",
+      "options": [
+        "What is DNA?",
+        "What is RNA?",
+        "What is a chromosome?"
+      ]
+    },
+    "400": {
+      "q": "First introduced in 1964 by IBM, what technological advancement allowed computers to use replaceable storage instead of punched cards?",
+      "a": "What is the floppy disk?",
+      "options": [
+        "What is the floppy disk?",
+        "What is magnetic tape?",
+        "What is a hard drive?"
+      ]
+    },
+    "500": {
+      "q": "Developed during World War II, what kitchen appliance was the accidental result of radar technology?",
+      "a": "What is the microwave oven?",
+      "options": [
+        "What is the microwave oven?",
+        "What is the convection oven?",
+        "What is the toaster oven?"
+      ]
+    }
+  },
+  "Science Fiction": {
+    "100": {
+      "q": "What science fiction author coined the Three Laws of Robotics, foundational to later AI and robot ethics?",
+      "a": "Who is Isaac Asimov?",
+      "options": [
+        "Who is Isaac Asimov?",
+        "Who is Arthur C. Clarke?",
+        "Who is Philip K. Dick?"
+      ]
+    },
+    "200": {
+      "q": "First appearing in a 1965 novel, what substance powers interstellar travel in the Dune universe?",
+      "a": "What is melange (or \u201cthe spice\u201d)?",
+      "options": [
+        "What is melange (or \u201cthe spice\u201d)?",
+        "What is unobtanium?",
+        "What is dilithium?"
+      ]
+    },
+    "300": {
+      "q": "Which author of 2001: A Space Odyssey collaborated with director Stanley Kubrick to bring it to the screen?",
+      "a": "Who is Arthur C. Clarke?",
+      "options": [
+        "Who is Arthur C. Clarke?",
+        "Who is Isaac Asimov?",
+        "Who is Ray Bradbury?"
+      ]
+    },
+    "400": {
+      "q": "What dystopian 1953 novel features 'firemen' who burn books and a world addicted to screens?",
+      "a": "What is Fahrenheit 451?",
+      "options": [
+        "What is Fahrenheit 451?",
+        "What is Brave New World?",
+        "What is 1984?"
+      ]
+    },
+    "500": {
+      "q": "In the 2014 film Interstellar starring Matthew McConaughey, time moves drastically slower on a planet orbiting which massive astronomical object?",
+      "a": "What is a black hole?",
+      "options": [
+        "What is a black hole?",
+        "What is a neutron star?",
+        "What is a quasar?"
+      ]
+    }
+  },
+  "Original Star Trek Trivia": {
+    "100": {
+      "q": "What was the name of the starship captained by James T. Kirk in the original series?",
+      "a": "What is the USS Enterprise (NCC-1701)?",
+      "options": [
+        "What is the USS Enterprise (NCC-1701)?",
+        "What is the USS Voyager?",
+        "What is the USS Defiant?"
+      ]
+    },
+    "200": {
+      "q": "Known for his split-fingered salute and the phrase 'Live long and prosper,' what is Mr. Spock\u2019s home planet?",
+      "a": "What is Vulcan?",
+      "options": [
+        "What is Vulcan?",
+        "What is Romulus?",
+        "What is Kronos?"
+      ]
+    },
+    "300": {
+      "q": "In The Trouble with Tribbles, what caused the small, furry creatures to reproduce so rapidly and overrun the Enterprise?",
+      "a": "What is an overabundance of food (specifically, quadrotriticale grain)?",
+      "options": [
+        "What is an overabundance of food (specifically, quadrotriticale grain)?",
+        "What is a transporter malfunction?",
+        "What is exposure to radiation?"
+      ]
+    },
+    "400": {
+      "q": "Gene Roddenberry\u2019s original pilot featured which captain, played by Jeffrey Hunter, before Shatner\u2019s Kirk took command?",
+      "a": "Who is Captain Christopher Pike?",
+      "options": [
+        "Who is Captain Christopher Pike?",
+        "Who is Captain Archer?",
+        "Who is Captain Decker?"
+      ]
+    },
+    "500": {
+      "q": "Which device, worn like a pin on the uniform, was not introduced until The Next Generation but is often mistakenly associated with the original series?",
+      "a": "What is the communicator badge?",
+      "options": [
+        "What is the communicator badge?",
+        "What is the tricorder?",
+        "What is the universal translator?"
+      ]
+    }
+  }
+};
 
     function updateBalance() {
       document.getElementById('balance').textContent = `Balance: $${balance}`;
