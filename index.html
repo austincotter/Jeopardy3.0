@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>What Year Was It? Birthday Jeopardy</title>
+  <style>
+    body { 
+      margin: 0; 
+      font-family: Arial, sans-serif; 
+      background: #f4f4f4; 
+      padding: 0;
+      overflow-x: hidden; /* Prevent horizontal scroll on body */
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+      position: relative;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+      padding: 20px 20px 0 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #f4f4f4;
+      z-index: 100;
+    }
+    
+    .balance {
+      background: #FFA300;
+      color: #000;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1.5em;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+      padding: 15px 20px;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      right: 0;
+      background: #FFA300;
+      z-index: 100;
+    }
+    
+    #board { 
+      display: grid; 
+      gap: 2px; 
+      margin: 20px;
+      margin-top: 160px; /* Space for fixed header and balance */
+      min-width: max-content; /* Ensure board doesn't shrink below content size */
+      overflow-x: auto; /* Allow horizontal scroll only for the board */
+      padding-bottom: 20px;
+    }
+    
+    .cell { 
+      background: #00539C; 
+      color: #fff; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      cursor: pointer; 
+      font-size: 1.2em; 
+      padding: 20px; 
+      transition: background-color 0.3s;
+      min-width: 80px; /* Ensure minimum width for mobile */
+      white-space: nowrap; /* Prevent text wrapping */
+    }
+    
+    .cell:hover {
+      background: #003366;
+    }
+    
+    .cell.answered {
+      background: #666;
+      cursor: default;
+    }
+    
+    .header-cell { 
+      background: #FFA300; 
+      color: #000;
+      font-weight: bold; 
+      cursor: default; 
+    }
+    
+    .overlay { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      visibility: hidden; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 1000;
+    }
+    
+    .overlay.active { 
+      visibility: visible; 
+    }
+    
+    #overlayContent { 
+      background: #fff; 
+      color: #000; 
+      padding: 30px; 
+      max-width: 80%; 
+      text-align: center; 
+      border-radius: 8px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .question {
+      font-size: 1.3em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    
+    .answer-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .answer-btn {
+      padding: 15px 20px;
+      font-size: 1.1em;
+      border: 2px solid #00539C;
+      background: #fff;
+      color: #00539C;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .answer-btn:hover {
+      background: #00539C;
+      color: #fff;
+    }
+    
+    .answer-btn.correct {
+      background: #4CAF50;
+      border-color: #4CAF50;
+      color: #fff;
+    }
+    
+    .answer-btn.incorrect {
+      background: #f44336;
+      border-color: #f44336;
+      color: #fff;
+    }
+    
+    .answer-btn.selected {
+      background: #FFA300;
+      border-color: #FFA300;
+      color: #000;
+    }
+    
+    .result {
+      font-size: 1.2em;
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    
+    .result.correct {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .result.incorrect {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    #closeBtn { 
+      margin-top: 20px; 
+      padding: 10px 20px; 
+      font-size: 1em; 
+      cursor: pointer;
+      background: #00539C;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    
+    #closeBtn:hover {
+      background: #003366;
+    }
+    
+    .birthday-overlay {
+      background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEAA7);
+      background-size: 400% 400%;
+      animation: gradient 3s ease infinite;
+    }
+    
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .birthday-content {
+      text-align: center;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .birthday-title {
+      font-size: 3em;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-20px); }
+      60% { transform: translateY(-10px); }
+    }
+    
+    .final-score {
+      font-size: 2em;
+      margin: 20px 0;
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #f00;
+      animation: confetti-fall 3s linear infinite;
+    }
+    
+    @keyframes confetti-fall {
+      0% { transform: translateY(-100vh) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+    
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+      .cell {
+        font-size: 1em;
+        padding: 15px;
+        min-width: 70px;
+      }
+      
+      .header h1 {
+        font-size: 1.5em;
+      }
+      
+      .header {
+        padding: 15px 15px 0 15px;
+      }
+      
+      .balance {
+        font-size: 1.2em;
+        padding: 12px 15px;
+        top: 70px;
+      }
+      
+      #board {
+        margin-top: 140px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .cell {
+        font-size: 0.9em;
+        padding: 12px;
+        min-width: 60px;
+      }
+      
+      .header h1 {
+        font-size: 1.3em;
+      }
+      
+      .header {
+        padding: 10px 10px 0 10px;
+      }
+      
+      .balance {
+        font-size: 1.1em;
+        padding: 10px;
+        top: 60px;
+      }
+      
+      #board {
+        margin-top: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Embedded theme audio -->
+  <audio id="themeAudio" src="Jeopardy-theme-song.mp3" preload="auto"></audio>
+  <audio id="correctAudio" src="rightanswer.mp3" preload="auto"></audio>
+  <audio id="incorrectAudio" src="incorrectanswer.mp3" preload="auto"></audio>
+
+  <div class="header">
+    <h1>🎉 Birthday Jeopardy! 🎉</h1>
+  </div>
+  
+  <div class="balance" id="balance">
+    Balance: $0
+  </div>
+
+  <div id="board"></div>
+  
+  <div class="overlay" id="overlay">
+    <div id="overlayContent"></div>
+  </div>
+  
+  <div class="overlay birthday-overlay" id="birthdayOverlay">
+    <div class="birthday-content" id="birthdayContent">
+      <div class="birthday-title">🎂 HAPPY BIRTHDAY! 🎂</div>
+      <div class="final-score" id="finalScore"></div>
+      <button id="closeBtn">Play Again</button>
+    </div>
+  </div>
+  
+  <!-- Introduction Overlay -->
+  <div class="overlay" id="introOverlay" style="visibility: visible;">
+    <div id="introContent" style="background: #fff; color: #000; padding: 40px; max-width: 600px; text-align: center; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <h1 style="color: #00539C; margin-bottom: 20px;">🎉 Welcome to Birthday Jeopardy! 🎉</h1>
+<p style="font-size: 1.2em; margin-bottom: 30px; line-height: 1.6;">
+  Test your knowledge with a special game celebrating Steve (born 1953) and Denise (born 1952)!
+  Categories include Pop Culture, Astronomy, Inventions, Science Fiction, and Original Star Trek Trivia.
+</p>
+<p style="font-size: 1.1em; margin-bottom: 30px; color: #666;">
+  Click on any square to answer a question. Get it right and earn money! Complete all questions to see your birthday celebration!
+</p>
+      <p style="font-size: 1.1em; margin-bottom: 30px; color: #666;">
+        Click on any square to answer a question. Get it right and earn money! Complete all questions to see your birthday celebration!
+      </p>
+      
+      <div style="margin: 30px 0;">
+        <button id="enableAudioBtn" style="padding: 15px 30px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; margin: 10px;">
+          🔊 Enable Audio (Recommended)
+        </button>
+        <div id="audioStatus" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
+      </div>
+      
+      <button id="startGameBtn" style="padding: 15px 40px; background: #00539C; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.3em; font-weight: bold; margin-top: 20px;" disabled>
+        🎮 Start Game
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const themeAudio = document.getElementById('themeAudio');
+    const correctAudio = document.getElementById('correctAudio');
+    const incorrectAudio = document.getElementById('incorrectAudio');
+    const categories = ["Music","Movies","TV & Pop Culture","Everyday Prices","Headlines","Fashion & Trends"];
+    const values = [100,200,300,400,500];
+    let balance = 0;
+    let answeredQuestions = new Set();
+    let currentQuestion = null;
+    let audioEnabled = false;
+    let gameStarted = false;
+
+    // Each answer must be 1972, 1974, or 'Neither'
+    const qna = {
+  "Pop Culture": {
+    "100": {
+      "q": "What iconic doll, introduced by Mattel in 1959, became a symbol of American pop culture?",
+      "a": "What is Barbie?",
+      "options": [
+        "What is Barbie?",
+        "What is Chatty Cathy?",
+        "What is Tammy?"
+      ]
+    },
+    "200": {
+      "q": "Which British band\u2019s appearance on The Ed Sullivan Show in 1964 launched the 'British Invasion' in America?",
+      "a": "Who are The Beatles?",
+      "options": [
+        "Who are The Beatles?",
+        "Who are The Rolling Stones?",
+        "Who are The Kinks?"
+      ]
+    },
+    "300": {
+      "q": "Known for her platinum blonde hair, who starred in Gentlemen Prefer Blondes and became a 1950s sex symbol?",
+      "a": "Who is Marilyn Monroe?",
+      "options": [
+        "Who is Marilyn Monroe?",
+        "Who is Jayne Mansfield?",
+        "Who is Grace Kelly?"
+      ]
+    },
+    "400": {
+      "q": "What dance craze, popularized in the early 1960s, featured the song 'Let\u2019s Twist Again' by Chubby Checker?",
+      "a": "What is The Twist?",
+      "options": [
+        "What is The Twist?",
+        "What is The Jitterbug?",
+        "What is The Mashed Potato?"
+      ]
+    },
+    "500": {
+      "q": "This magazine, founded in 1953 by Hugh Hefner, was as known for its articles as its provocative centerfolds.",
+      "a": "What is Playboy?",
+      "options": [
+        "What is Playboy?",
+        "What is Esquire?",
+        "What is Penthouse?"
+      ]
+    }
+  },
+  "Astronomy": {
+    "100": {
+      "q": "What term describes the point in a planet's orbit when it is closest to the Sun?",
+      "a": "What is perihelion?",
+      "options": [
+        "What is perihelion?",
+        "What is aphelion?",
+        "What is periapsis?"
+      ]
+    },
+    "200": {
+      "q": "Which planet rotates on its side, with an axial tilt of about 98 degrees?",
+      "a": "What is Uranus?",
+      "options": [
+        "What is Uranus?",
+        "What is Neptune?",
+        "What is Venus?"
+      ]
+    },
+    "300": {
+      "q": "What element fuels nuclear fusion in the core of most main-sequence stars?",
+      "a": "What is hydrogen?",
+      "options": [
+        "What is hydrogen?",
+        "What is helium?",
+        "What is carbon?"
+      ]
+    },
+    "400": {
+      "q": "What phenomenon causes light from distant galaxies to shift toward the red end of the spectrum, providing evidence of an expanding universe?",
+      "a": "What is redshift?",
+      "options": [
+        "What is redshift?",
+        "What is blueshift?",
+        "What is lensing?"
+      ]
+    },
+    "500": {
+      "q": "What is the name of the first space telescope launched into orbit in 1990 that revolutionized our view of the universe?",
+      "a": "What is the Hubble Space Telescope?",
+      "options": [
+        "What is the Hubble Space Telescope?",
+        "What is the James Webb Telescope?",
+        "What is the Kepler Telescope?"
+      ]
+    }
+  },
+  "Inventions": {
+    "100": {
+      "q": "In 1952, which American virologist developed the first effective vaccine against poliomyelitis?",
+      "a": "Who is Jonas Salk?",
+      "options": [
+        "Who is Jonas Salk?",
+        "Who is Albert Sabin?",
+        "Who is Louis Pasteur?"
+      ]
+    },
+    "200": {
+      "q": "Patented in 1947, what everyday object was originally marketed as 'the soundless zipper'?",
+      "a": "What is Velcro?",
+      "options": [
+        "What is Velcro?",
+        "What is the zipper?",
+        "What is Scotch tape?"
+      ]
+    },
+    "300": {
+      "q": "In 1953, what groundbreaking double-helix model was proposed, revealing the structure of genetic material?",
+      "a": "What is DNA?",
+      "options": [
+        "What is DNA?",
+        "What is RNA?",
+        "What is a chromosome?"
+      ]
+    },
+    "400": {
+      "q": "First introduced in 1964 by IBM, what technological advancement allowed computers to use replaceable storage instead of punched cards?",
+      "a": "What is the floppy disk?",
+      "options": [
+        "What is the floppy disk?",
+        "What is magnetic tape?",
+        "What is a hard drive?"
+      ]
+    },
+    "500": {
+      "q": "Developed during World War II, what kitchen appliance was the accidental result of radar technology?",
+      "a": "What is the microwave oven?",
+      "options": [
+        "What is the microwave oven?",
+        "What is the convection oven?",
+        "What is the toaster oven?"
+      ]
+    }
+  },
+  "Science Fiction": {
+    "100": {
+      "q": "What science fiction author coined the Three Laws of Robotics, foundational to later AI and robot ethics?",
+      "a": "Who is Isaac Asimov?",
+      "options": [
+        "Who is Isaac Asimov?",
+        "Who is Arthur C. Clarke?",
+        "Who is Philip K. Dick?"
+      ]
+    },
+    "200": {
+      "q": "First appearing in a 1965 novel, what substance powers interstellar travel in the Dune universe?",
+      "a": "What is melange (or \u201cthe spice\u201d)?",
+      "options": [
+        "What is melange (or \u201cthe spice\u201d)?",
+        "What is unobtanium?",
+        "What is dilithium?"
+      ]
+    },
+    "300": {
+      "q": "Which author of 2001: A Space Odyssey collaborated with director Stanley Kubrick to bring it to the screen?",
+      "a": "Who is Arthur C. Clarke?",
+      "options": [
+        "Who is Arthur C. Clarke?",
+        "Who is Isaac Asimov?",
+        "Who is Ray Bradbury?"
+      ]
+    },
+    "400": {
+      "q": "What dystopian 1953 novel features 'firemen' who burn books and a world addicted to screens?",
+      "a": "What is Fahrenheit 451?",
+      "options": [
+        "What is Fahrenheit 451?",
+        "What is Brave New World?",
+        "What is 1984?"
+      ]
+    },
+    "500": {
+      "q": "In the 2014 film Interstellar starring Matthew McConaughey, time moves drastically slower on a planet orbiting which massive astronomical object?",
+      "a": "What is a black hole?",
+      "options": [
+        "What is a black hole?",
+        "What is a neutron star?",
+        "What is a quasar?"
+      ]
+    }
+  },
+  "Original Star Trek Trivia": {
+    "100": {
+      "q": "What was the name of the starship captained by James T. Kirk in the original series?",
+      "a": "What is the USS Enterprise (NCC-1701)?",
+      "options": [
+        "What is the USS Enterprise (NCC-1701)?",
+        "What is the USS Voyager?",
+        "What is the USS Defiant?"
+      ]
+    },
+    "200": {
+      "q": "Known for his split-fingered salute and the phrase 'Live long and prosper,' what is Mr. Spock\u2019s home planet?",
+      "a": "What is Vulcan?",
+      "options": [
+        "What is Vulcan?",
+        "What is Romulus?",
+        "What is Kronos?"
+      ]
+    },
+    "300": {
+      "q": "In The Trouble with Tribbles, what caused the small, furry creatures to reproduce so rapidly and overrun the Enterprise?",
+      "a": "What is an overabundance of food (specifically, quadrotriticale grain)?",
+      "options": [
+        "What is an overabundance of food (specifically, quadrotriticale grain)?",
+        "What is a transporter malfunction?",
+        "What is exposure to radiation?"
+      ]
+    },
+    "400": {
+      "q": "Gene Roddenberry\u2019s original pilot featured which captain, played by Jeffrey Hunter, before Shatner\u2019s Kirk took command?",
+      "a": "Who is Captain Christopher Pike?",
+      "options": [
+        "Who is Captain Christopher Pike?",
+        "Who is Captain Archer?",
+        "Who is Captain Decker?"
+      ]
+    },
+    "500": {
+      "q": "Which device, worn like a pin on the uniform, was not introduced until The Next Generation but is often mistakenly associated with the original series?",
+      "a": "What is the communicator badge?",
+      "options": [
+        "What is the communicator badge?",
+        "What is the tricorder?",
+        "What is the universal translator?"
+      ]
+    }
+  }
+};
+
+    function updateBalance() {
+      document.getElementById('balance').textContent = `Balance: $${balance}`;
+    }
+
+    function createBoard() {
+      const board = document.getElementById("board");
+      board.style.gridTemplateColumns = `repeat(${categories.length}, 1fr)`;
+
+      categories.forEach(cat => {
+        const cell = document.createElement("div");
+        cell.className = "cell header-cell";
+        cell.textContent = cat;
+        board.appendChild(cell);
+      });
+
+      values.forEach(val => {
+        categories.forEach(cat => {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.textContent = `$${val}`;
+          cell.onclick = () => showQuestion(cat, val);
+          board.appendChild(cell);
+        });
+      });
+    }
+
+    function showQuestion(cat, val) {
+      if (!gameStarted) return; // Don't allow questions before game starts
+      
+      const questionKey = `${cat}-${val}`;
+      if (answeredQuestions.has(questionKey)) {
+        return; // Question already answered
+      }
+
+      currentQuestion = { cat, val, questionKey };
+      const item = qna[cat][val];
+      
+      // Shuffle options
+      const shuffledOptions = [...item.options].sort(() => Math.random() - 0.5);
+      
+      document.getElementById("overlayContent").innerHTML = `
+        <div class="question">${item.q}</div>
+        <div class="answer-options">
+          ${shuffledOptions.map(option => `
+            <button class="answer-btn" onclick="selectAnswer('${option}')">${option}</button>
+          `).join('')}
+        </div>
+        <div id="result"></div>
+        <button id="closeBtn" onclick="closeQuestion()" style="display: none;">Continue</button>
+      `;
+      
+      document.getElementById("overlay").classList.add("active");
+      
+      // Play audio if enabled
+      if (audioEnabled) {
+        themeAudio.currentTime = 0;
+        themeAudio.play().catch(error => {
+          console.log('Audio play failed:', error);
+        });
+      }
+    }
+
+    function selectAnswer(selectedAnswer) {
+      const item = qna[currentQuestion.cat][currentQuestion.val];
+      const resultDiv = document.getElementById("result");
+      const closeBtn = document.getElementById("closeBtn");
+      const answerBtns = document.querySelectorAll('.answer-btn');
+      
+      // Disable all buttons
+      answerBtns.forEach(btn => {
+        btn.style.pointerEvents = 'none';
+        if (btn.textContent === selectedAnswer) {
+          btn.classList.add('selected');
+        }
+      });
+      
+      if (selectedAnswer === item.a) {
+        // Correct answer
+        balance += currentQuestion.val;
+        resultDiv.innerHTML = `<div class="result correct">🎉 Correct! You earned $${currentQuestion.val}! 🎉</div>`;
+        document.querySelector('.answer-btn.selected').classList.add('correct');
+        
+        // Play correct answer sound
+        if (audioEnabled) {
+          correctAudio.currentTime = 0;
+          correctAudio.play().catch(error => {
+            console.log('Correct audio play failed:', error);
+          });
+        }
+      } else {
+        // Incorrect answer
+        resultDiv.innerHTML = `<div class="result incorrect">❌ Wrong! The correct answer was: ${item.a}</div>`;
+        document.querySelector('.answer-btn.selected').classList.add('incorrect');
+        
+        // Highlight correct answer
+        answerBtns.forEach(btn => {
+          if (btn.textContent === item.a) {
+            btn.classList.add('correct');
+          }
+        });
+        
+        // Play incorrect answer sound (15% quieter)
+        if (audioEnabled) {
+          incorrectAudio.currentTime = 0;
+          incorrectAudio.volume = 0.85; // 85% volume (15% quieter)
+          incorrectAudio.play().catch(error => {
+            console.log('Incorrect audio play failed:', error);
+          });
+        }
+      }
+      
+      answeredQuestions.add(currentQuestion.questionKey);
+      updateBalance();
+      
+      // Mark cell as answered
+      const cells = document.querySelectorAll('.cell');
+      const cellIndex = categories.indexOf(currentQuestion.cat) + (values.indexOf(currentQuestion.val) + 1) * categories.length;
+      cells[cellIndex].classList.add('answered');
+      cells[cellIndex].textContent = '✓';
+      
+      closeBtn.style.display = 'inline-block';
+      
+      // Check if game is complete
+      if (answeredQuestions.size === categories.length * values.length) {
+        setTimeout(() => {
+          showBirthdayCelebration();
+        }, 2000);
+      }
+    }
+
+    function closeQuestion() {
+      document.getElementById("overlay").classList.remove("active");
+      themeAudio.pause();
+    }
+
+    function showBirthdayCelebration() {
+      document.getElementById("finalScore").textContent = `Final Score: $${balance}`;
+      document.getElementById("birthdayOverlay").classList.add("active");
+      createConfetti();
+    }
+
+    function createConfetti() {
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + 'vw';
+          confetti.style.backgroundColor = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'][Math.floor(Math.random() * 6)];
+          confetti.style.animationDelay = Math.random() * 3 + 's';
+          document.body.appendChild(confetti);
+          
+          setTimeout(() => {
+            confetti.remove();
+          }, 3000);
+        }, i * 100);
+      }
+    }
+
+    function resetGame() {
+      balance = 0;
+      answeredQuestions.clear();
+      updateBalance();
+      document.getElementById("birthdayOverlay").classList.remove("active");
+      
+      // Reset board
+      const cells = document.querySelectorAll('.cell');
+      cells.forEach((cell, index) => {
+        if (index >= categories.length) { // Skip header cells
+          cell.classList.remove('answered');
+          cell.textContent = `$${values[Math.floor((index - categories.length) / categories.length)]}`;
+        }
+      });
+    }
+
+    // Event listeners
+    document.getElementById("closeBtn").onclick = resetGame;
+    
+    // Introduction event listeners
+    document.getElementById("enableAudioBtn").onclick = function() {
+      this.textContent = "🔄 Enabling...";
+      this.disabled = true;
+      
+      themeAudio.play().then(() => {
+        themeAudio.pause();
+        themeAudio.currentTime = 0;
+        audioEnabled = true;
+        this.textContent = "✅ Audio Enabled!";
+        this.style.background = "#4CAF50";
+        document.getElementById("audioStatus").textContent = "Audio is ready! 🎵";
+        document.getElementById("startGameBtn").disabled = false;
+      }).catch(error => {
+        console.log('Audio enablement failed:', error);
+        this.textContent = "❌ Audio Blocked";
+        this.style.background = "#f44336";
+        document.getElementById("audioStatus").textContent = "Audio blocked by browser - game will work without sound";
+        document.getElementById("startGameBtn").disabled = false;
+      });
+    };
+    
+    document.getElementById("startGameBtn").onclick = function() {
+      gameStarted = true;
+      document.getElementById("introOverlay").style.visibility = "hidden";
+      document.getElementById("introOverlay").classList.remove("active");
+    };
+
+    // Initialize game
+    createBoard();
+    updateBalance();
+    
+    // Test audio loading
+    themeAudio.addEventListener('loadeddata', () => {
+      console.log('Audio file loaded successfully!');
+    });
+    
+    themeAudio.addEventListener('error', (e) => {
+      console.log('Audio file failed to load:', e);
+    });
+  </script>
+</body>
+</html> 
